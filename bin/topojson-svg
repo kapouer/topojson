@@ -33,6 +33,11 @@ var argv = optimist
       describe: "number of digits after the decimal place to output",
       default: undefined
     })
+    .options("p", {
+      alias: "property",
+      describe: "property to keep as data attribute",
+      default: false
+    })
     .options("help", {
       describe: "display this helpful message",
       type: "boolean",
@@ -91,6 +96,12 @@ function quote(string) {
 function outputGeometry(geometry) {
   out.write("    <path");
   if (geometry.id != null) out.write(" id=\"feature-" + quote(geometry.id + "") + "\"");
+  if (geometry.properties && argv.property) {
+    var val = geometry.properties[argv.property];
+    if (val != null) {
+      out.write(" data-" + argv.property.toLowerCase() + '="' + quote(val) + '"');
+    }
+  }
   var d = path(topojson.feature(topology, geometry));
   out.write((d == null ? "" : " d=\"" + d + "\"") + "></path>" + os.EOL);
 }
